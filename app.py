@@ -155,9 +155,9 @@ with tab1:
                         (c3,"Numeric Cols",f"{len(numeric_cols)}"),(c4,"Missing",f"{df_raw.isnull().sum().sum()}")]:
         col.markdown(f'<div class="metric-card"><h2>{val}</h2><p>{lbl}</p></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-title">Preview</div>', unsafe_allow_html=True)
-    st.dataframe(df_raw.head(20), use_container_width=True, height=300)
+    st.dataframe(df_raw.head(20), width='stretch', height=300)
     st.markdown('<div class="section-title">Statistical Summary</div>', unsafe_allow_html=True)
-    st.dataframe(df_raw.describe().round(2), use_container_width=True)
+    st.dataframe(df_raw.describe().round(2), width='stretch')
 
 # ══ TAB 2 ════════════════════════════════════════════════════════════════════
 with tab2:
@@ -166,7 +166,7 @@ with tab2:
     mdf  = pd.DataFrame({"Count":miss,"Pct%":miss_pct}); mdf = mdf[mdf["Count"]>0]
     if not mdf.empty:
         st.warning(f"⚠️ {mdf['Count'].sum()} missing values in {len(mdf)} columns")
-        st.dataframe(mdf, use_container_width=True)
+        st.dataframe(mdf, width='stretch')
         fig,ax = plt.subplots(figsize=(10,3))
         ax.barh(mdf.index, mdf["Pct%"], color=PALETTE[0], height=0.5)
         ax.set_title("Missing Values %"); apply_dark_style(fig,[ax]); st.pyplot(fig); plt.close()
@@ -180,7 +180,7 @@ with tab2:
         out[col] = dfc[(dfc[col]<Q1-1.5*IQR)|(dfc[col]>Q3+1.5*IQR)].shape[0]
     odf = pd.DataFrame.from_dict(out,orient="index",columns=["Outliers"])
     odf = odf[odf["Outliers"]>0].sort_values("Outliers",ascending=False)
-    if not odf.empty: st.dataframe(odf, use_container_width=True)
+    if not odf.empty: st.dataframe(odf, width='stretch')
     else: st.success("✅ No significant outliers!")
     st.success(f"✅ Clean dataset: {len(dfc)} rows × {dfc.shape[1]} columns")
 
@@ -254,8 +254,8 @@ with tab4:
     grp = dfc.groupby(sel_cat)[sel_num].agg(["mean","sum","count"]).round(2)
     grp.columns = ["Average","Total","Count"]; grp = grp.sort_values("Average",ascending=False)
     c1,c2 = st.columns(2)
-    with c1: st.markdown("**🏆 Top**"); st.dataframe(grp.head(),use_container_width=True)
-    with c2: st.markdown("**📉 Bottom**"); st.dataframe(grp.tail(),use_container_width=True)
+    with c1: st.markdown("**🏆 Top**"); st.dataframe(grp.head(),width='stretch')
+    with c2: st.markdown("**📉 Bottom**"); st.dataframe(grp.tail(),width='stretch')
     if "Month" in dfc.columns:
         st.markdown('<div class="section-title">Monthly Trend</div>', unsafe_allow_html=True)
         mo = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
@@ -279,7 +279,7 @@ with tab5:
         "Effort":["🟡 Medium","🟢 Low","🔴 High","🟢 Low","🟡 Medium"],
         "Timeline":["Q1 2025","Immediate","Q2 2025","Q1 2025","Q3 2025"],
         "Owner":["Sales","Data Team","Strategy","Analytics","Marketing"]}),
-        use_container_width=True, hide_index=True)
+        width='stretch', hide_index=True)
     avg_v = dfc[sel_num].mean(); top_v = dfc.groupby(sel_cat)[sel_num].mean().max()
     st.markdown(f"""<div style="background:rgba(255,255,255,0.04);border-radius:16px;padding:24px 28px;line-height:1.8;color:#c4b5fd;font-size:0.95rem;">
     <strong style="color:#e9d5ff;font-size:1.1rem;">Executive Summary</strong><br><br>
@@ -465,7 +465,7 @@ with tab6:
             # Classification Report
             st.markdown('<div class="section-title">Classification Report</div>', unsafe_allow_html=True)
             rpt = classification_report(yte, ypred, target_names=[str(c) for c in class_labels], output_dict=True)
-            st.dataframe(pd.DataFrame(rpt).T.round(3), use_container_width=True)
+            st.dataframe(pd.DataFrame(rpt).T.round(3), width='stretch')
 
             # Feature Importance
             if hasattr(mdl,"feature_importances_"):
